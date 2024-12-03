@@ -6,7 +6,7 @@ import numpy as np
 
 # Data visualization packages
 import streamlit as st
-from st_aggrid import AgGrid, GridOptionsBuilder
+#from st_aggrid import AgGrid, GridOptionsBuilder
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import mplcursors
