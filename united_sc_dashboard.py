@@ -117,6 +117,7 @@ if tab == "Shot Maps":
         ####################################################################
 
         # calc xG from imported file
+        shot_events['Player'] = shot_events['Player'].replace('Enrique Gudino De Grote', 'Enrique Gudino')
         total_shots = calc_xg(shot_events)
 
         # Setup the pitch
