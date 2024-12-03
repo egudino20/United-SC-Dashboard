@@ -255,6 +255,6 @@ elif tab == "Shot Leaders":
         })
 
         st.dataframe(summary_df, use_container_width=True, hide_index=True)
-        
+
     except Exception as e:
-    st.write("No Data Available")
+        st.write("No Data Available")
