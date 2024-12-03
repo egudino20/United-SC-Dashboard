@@ -157,98 +157,104 @@ if tab == "Shot Maps":
 
 ####################################################################
 elif tab == "Shot Leaders":
-    # create header
-    st.header("Shot Leaders")
 
-    # Selector for competition
-    competition = st.sidebar.selectbox(
-        "Competition:", ("UPSL", "US Open Cup")
+    # Error Handling
+    try:
+        # create header
+        st.header("Shot Leaders")
+
+        # Selector for competition
+        competition = st.sidebar.selectbox(
+            "Competition:", ("UPSL", "US Open Cup")
+            )
+
+        # Selector for season
+        season = st.sidebar.selectbox(
+            "Season:", ("Fall 2024", "Spring 2025")
+            )
+
+        # Create a DataFrame of the match
+        match_df = load_matches(competition=competition, season=season)
+
+            # Read and combine data for selected matches
+        dfs_list = []
+        for _, row in match_df.iterrows():
+            opponent = row["Opponent"]
+            match_id = row["MatchId"]
+            file_path = f'Competitions/{competition}/{season}/Matches/{opponent}/Raw Data/{team} Shots.csv'
+
+            # Attempt to read the file
+            df = pd.read_csv(file_path)
+            df = df.rename(columns={'Team': "H_A"})
+            df['Team'] = team
+            df['MatchId'] = match_id
+            dfs_list.append(df)
+
+        # Combine into a single DataFrame
+        shot_events = pd.concat(dfs_list, ignore_index=True)
+
+        # calc xG from imported file
+        total_shots = calc_xg(shot_events)
+
+        # Compute metrics
+        total_shots["non_penalty_xG"] = total_shots.apply(
+            lambda row: row["xG"] if not row["isPenalty"] else 0, axis=1
         )
 
-    # Selector for season
-    season = st.sidebar.selectbox(
-        "Season:", ("Fall 2024", "Spring 2025")
+        summary_df = (
+            total_shots.groupby("Player")
+            .agg(
+                total_shots=("Player", "count"),
+                non_penalty_shots=("isPenalty", lambda x: len(x) - x.sum()),
+                openplay_shots=("isRegularPlay", "sum"),
+                goals=("isGoal", "sum"),
+                goals_per_shot=("isGoal", lambda x: x.sum() / len(x) if len(x) > 0 else 0),
+                xG=("xG", "sum"),
+                xG_per_shot=("xG", lambda x: x.sum() / len(x) if len(x) > 0 else 0),
+                non_penalty_xG=("non_penalty_xG", "sum"),
+                non_penalty_xG_per_shot=(
+                    "non_penalty_xG",
+                    lambda x: x.sum() / (len(x) - total_shots["isPenalty"].sum())
+                    if (len(x) - total_shots["isPenalty"].sum()) > 0
+                    else 0,
+                ),
+            )
+            .reset_index()
         )
 
-    # Create a DataFrame of the match
-    match_df = load_matches(competition=competition, season=season)
+        # Adding 'Goals - xG' column
+        summary_df["goals_minus_xG"] = summary_df["goals"] - summary_df["xG"]
 
-        # Read and combine data for selected matches
-    dfs_list = []
-    for _, row in match_df.iterrows():
-        opponent = row["Opponent"]
-        match_id = row["MatchId"]
-        file_path = f'Competitions/{competition}/{season}/Matches/{opponent}/Raw Data/{team} Shots.csv'
+        # reset index and drop index column
+        summary_df = summary_df.reset_index(drop=True)
 
-        # Attempt to read the file
-        df = pd.read_csv(file_path)
-        df = df.rename(columns={'Team': "H_A"})
-        df['Team'] = team
-        df['MatchId'] = match_id
-        dfs_list.append(df)
-
-    # Combine into a single DataFrame
-    shot_events = pd.concat(dfs_list, ignore_index=True)
-
-    # calc xG from imported file
-    total_shots = calc_xg(shot_events)
-
-    # Compute metrics
-    total_shots["non_penalty_xG"] = total_shots.apply(
-        lambda row: row["xG"] if not row["isPenalty"] else 0, axis=1
-    )
-
-    summary_df = (
-        total_shots.groupby("Player")
-        .agg(
-            total_shots=("Player", "count"),
-            non_penalty_shots=("isPenalty", lambda x: len(x) - x.sum()),
-            openplay_shots=("isRegularPlay", "sum"),
-            goals=("isGoal", "sum"),
-            goals_per_shot=("isGoal", lambda x: x.sum() / len(x) if len(x) > 0 else 0),
-            xG=("xG", "sum"),
-            xG_per_shot=("xG", lambda x: x.sum() / len(x) if len(x) > 0 else 0),
-            non_penalty_xG=("non_penalty_xG", "sum"),
-            non_penalty_xG_per_shot=(
-                "non_penalty_xG",
-                lambda x: x.sum() / (len(x) - total_shots["isPenalty"].sum())
-                if (len(x) - total_shots["isPenalty"].sum()) > 0
-                else 0,
-            ),
+        # Rename columns
+        summary_df = summary_df.rename(
+            columns={
+                "total_shots": "Shots",
+                "non_penalty_shots": "Non-Penalty Shots",
+                "openplay_shots": "Open Play Shots",
+                "goals": "Goals",
+                "goals_per_shot": "Shooting Accuracy (Goals per Shot)",
+                "xG": "Expected Goals (xG)",
+                "xG_per_shot": "Shooting Efficiency (xG per Shot)",
+                "non_penalty_xG": "Non-Penalty xG",
+                "non_penalty_xG_per_shot": "Non-Penalty xG per Shot",
+                "goals_minus_xG": "Finishing (Goals minus xG)",
+            }
         )
-        .reset_index()
-    )
 
-    # Adding 'Goals - xG' column
-    summary_df["goals_minus_xG"] = summary_df["goals"] - summary_df["xG"]
+        # Apply formatting to ensure two decimal places are shown, even for zero
+        summary_df = summary_df.style.format({
+            "Shooting Accuracy (Goals per Shot)": "{:.2f}",
+            "Expected Goals (xG)": "{:.2f}",
+            "Shooting Efficiency (xG per Shot)": "{:.2f}",
+            "Non-Penalty xG": "{:.2f}",
+            "Non-Penalty xG per Shot": "{:.2f}",
+            "Finishing (Goals minus xG)": "{:.2f}"
+        })
 
-    # reset index and drop index column
-    summary_df = summary_df.reset_index(drop=True)
-
-    # Rename columns
-    summary_df = summary_df.rename(
-        columns={
-            "total_shots": "Shots",
-            "non_penalty_shots": "Non-Penalty Shots",
-            "openplay_shots": "Open Play Shots",
-            "goals": "Goals",
-            "goals_per_shot": "Shooting Accuracy (Goals per Shot)",
-            "xG": "Expected Goals (xG)",
-            "xG_per_shot": "Shooting Efficiency (xG per Shot)",
-            "non_penalty_xG": "Non-Penalty xG",
-            "non_penalty_xG_per_shot": "Non-Penalty xG per Shot",
-            "goals_minus_xG": "Finishing (Goals minus xG)",
-        }
-    )
-
-    # Apply formatting to ensure two decimal places are shown, even for zero
-    summary_df = summary_df.style.format({
-        "Shooting Accuracy (Goals per Shot)": "{:.2f}",
-        "Expected Goals (xG)": "{:.2f}",
-        "Shooting Efficiency (xG per Shot)": "{:.2f}",
-        "Non-Penalty xG": "{:.2f}",
-        "Non-Penalty xG per Shot": "{:.2f}",
-        "Finishing (Goals minus xG)": "{:.2f}"
-    })
-
-    st.dataframe(summary_df, use_container_width=True, hide_index=True)
+        st.dataframe(summary_df, use_container_width=True, hide_index=True)
+        
+    except Exception as e:
+    st.write("No Data Available")
