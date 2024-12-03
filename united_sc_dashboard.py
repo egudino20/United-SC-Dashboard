@@ -136,7 +136,7 @@ if tab == "Shot Maps":
         if player == "All Players":
             filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
             filtered_shots.reset_index(drop=True, inplace=True)
-        elif view == "Shots For":
+        elif player != "All Players":
             filtered_shots = total_shots[total_shots['Player'] == player]
             filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
             filtered_shots.reset_index(drop=True, inplace=True)
