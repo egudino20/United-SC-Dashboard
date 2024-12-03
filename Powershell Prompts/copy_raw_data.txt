@@ -1,0 +1,11 @@
+# Define the source Matches folder
+$source = "C:\Users\egudi\Projects\UnitedSC\UPSL Fall 2024\Matches"
+
+# Define the destination folder
+$destination = "C:\Users\egudi\Projects\United-SC-Dashboard\Matches"
+
+# Ensure the destination folder exists
+if (-not (Test-Path -Path $destination)) {New-Item -ItemType Directory -Path $destination}
+
+# Copy only the "Raw Data" folder and its contents
+Get-ChildItem -Path $source -Recurse -Directory -Filter "Raw Data" | ForEach-Object {$rawDataFolder = $_.FullName; $targetFolder = Join-Path $destination $_.Parent.Name; if (-not (Test-Path -Path $targetFolder)) {New-Item -ItemType Directory -Path $targetFolder} Copy-Item -Path $rawDataFolder -Destination $targetFolder -Recurse -Force  # Copy only the "Raw Data" folder}
