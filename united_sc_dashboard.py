@@ -68,10 +68,11 @@ if tab == "Shot Maps":
 
         # Create a selector to choose player to analyze
         if view == "Shots For":
+        if view == "Shots For":
             player = st.selectbox(
                 "Select Player:",
-                ("All Players", "Gavin Johnson", "Andrii Pityliak", "Brennan Wu",
-                "Enrique Gudino De Grote", "Andres Castellanos", "Gerardo Espinoza",
+                ("All Players", "Andres Castellanos", "Andrii Pityliak", "Brennan Wu",
+                "Enrique Gudino De Grote", "Gavin Johnson", "Gerardo Espinoza",
                 "Ian M. Murray", "Jacob Sullivan Golda", "Jamie R. Beamish",
                 "Landon Johnson", "MacKenzie Bechard", "Moritz Seban",
                 "Peter Beasley", "Peter Horner", "Rom Brown", "Ryan Olans",
