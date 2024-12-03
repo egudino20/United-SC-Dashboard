@@ -121,7 +121,7 @@ if tab == "Shot Maps":
 
         # Setup the pitch
         pitch = VerticalPitch(pitch_type='statsbomb', pitch_color='#1d2849', line_color='w', half=True, pad_top=20, pad_right=20)
-        fig, ax = pitch.draw(figsize=(8, 10))
+        fig, ax = pitch.draw(figsize=(8, 12))
 
         # shot map method
         createShotmap(total_shots, pitch=pitch, fig=fig, ax=ax, team=team, view=view, competition=competition, season_year=season, players=player, 
