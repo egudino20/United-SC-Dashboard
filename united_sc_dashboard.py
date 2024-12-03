@@ -68,7 +68,6 @@ if tab == "Shot Maps":
 
         # Create a selector to choose player to analyze
         if view == "Shots For":
-        if view == "Shots For":
             player = st.selectbox(
                 "Select Player:",
                 ("All Players", "Andres Castellanos", "Andrii Pityliak", "Brennan Wu",
