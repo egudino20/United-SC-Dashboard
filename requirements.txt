@@ -1,6 +1,6 @@
 streamlit==1.28.0
 pandas==2.1.0
-numpy==1.24.3
+numpy>=1.25.0
 matplotlib==3.7.2
 mplsoccer==1.1.12
 mplcursors==0.5.2
