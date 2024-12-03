@@ -71,7 +71,7 @@ if tab == "Shot Maps":
             player = st.selectbox(
                 "Select Player:",
                 ("All Players", "Andres Castellanos", "Andrii Pityliak", "Brennan Wu",
-                "Enrique Gudino De Grote", "Gavin Johnson", "Gerardo Espinoza",
+                "Enrique Gudino", "Gavin Johnson", "Gerardo Espinoza",
                 "Ian M. Murray", "Jacob Sullivan Golda", "Jamie R. Beamish",
                 "Landon Johnson", "MacKenzie Bechard", "Moritz Seban",
                 "Peter Beasley", "Peter Horner", "Rom Brown", "Ryan Olans",
@@ -121,7 +121,7 @@ if tab == "Shot Maps":
 
         # Setup the pitch
         pitch = VerticalPitch(pitch_type='statsbomb', pitch_color='#1d2849', line_color='w', half=True, pad_top=20, pad_right=20)
-        fig, ax = pitch.draw(figsize=(10, 12))
+        fig, ax = pitch.draw(figsize=(8, 10))
 
         # shot map method
         createShotmap(total_shots, pitch=pitch, fig=fig, ax=ax, team=team, view=view, competition=competition, season_year=season, players=player, 
