@@ -132,15 +132,22 @@ if tab == "Shot Maps":
         # Display the plot
         st.pyplot(fig)
 
-        # show data set for only selected player shots
+        # Determine the columns to display based on the view and player selection
+        columns_to_display = ['Player', 'xG', 'Outcome', 'Shot Type', 'Situation']
         if view == "Shots For":
-            filtered_shots = total_shots[total_shots['Player'] == player]
-            filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
-            filtered_shots.reset_index(drop=True, inplace=True)
+            columns_to_display.insert(1, 'Team')  # Add 'Team' column for "Shots For" view
+
+        # Filter the data based on the view and player selection
+        if view == "Shots For":
+            if player != "All Players":
+                filtered_shots = df[(df['match_id'].isin(selected_matches)) & (df['player_name'] == player)].copy()
+            else:
+                filtered_shots = df[df['match_id'].isin(selected_matches)].copy()
         else:
-            filtered_shots = total_shots.copy()
-            filtered_shots = filtered_shots[['Team', 'xG', 'outcome', 'shotType', 'situation']]
-            filtered_shots.reset_index(drop=True, inplace=True)
+            if player != "All Players":
+                filtered_shots = df[(df['match_id'].isin(selected_matches)) & (df['player_name'] == player)].copy()
+            else:
+                filtered_shots = df[df['match_id'].isin(selected_matches)].copy()
 
         # Apply formatting to ensure two decimal places are shown, even for zero
         filtered_shots = filtered_shots.style.format({
