@@ -135,16 +135,10 @@ if tab == "Shot Maps":
         # show data set for only selected player shots
         if view == "Shots For":
             filtered_shots = total_shots[total_shots['Player'] == player]
-        else:
-            filtered_shots = total_shots.copy()
-
-        # Customize total shots to only include needed columns
-
-        # remove player column for now for Shots Against
-        if view == "Shots For":
             filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
             filtered_shots.reset_index(drop=True, inplace=True)
         else:
+            filtered_shots = total_shots.copy()
             filtered_shots = filtered_shots[['Team', 'xG', 'outcome', 'shotType', 'situation']]
             filtered_shots.reset_index(drop=True, inplace=True)
 
