@@ -132,9 +132,6 @@ if tab == "Shot Maps":
         # Display the plot
         st.pyplot(fig)
 
-        # All Players filter
-        total_shots['filter'] = total_shots['Team'].apply(lambda x: "All Players" if x == "United SC", else x)
-
         # show data set for only selected player shots
         if view == "Shots For":
             if player == "All Players":
