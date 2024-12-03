@@ -70,7 +70,7 @@ if tab == "Shot Maps":
         if view == "Shots For":
             player = st.selectbox(
                 "Select Player:",
-                ("All Players", "Gavin Johnson", "Andrii Pityliak", "Brennan Wu",
+                ("Gavin Johnson", "Andrii Pityliak", "Brennan Wu",
                 "Enrique Gudino De Grote", "Andres Castellanos", "Gerardo Espinoza",
                 "Ian M. Murray", "Jacob Sullivan Golda", "Jamie R. Beamish",
                 "Landon Johnson", "MacKenzie Bechard", "Moritz Seban",
@@ -133,10 +133,7 @@ if tab == "Shot Maps":
         st.pyplot(fig)
 
         # show data set for only selected player shots
-        if view == "Shots For" and player == "All Players":
-            filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
-            filtered_shots.reset_index(drop=True, inplace=True)
-        elif view == "Shots For" and player != "All Players":
+        if view == "Shots For":
             filtered_shots = total_shots[total_shots['Player'] == player]
             filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
             filtered_shots.reset_index(drop=True, inplace=True)
