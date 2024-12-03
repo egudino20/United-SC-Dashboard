@@ -102,6 +102,9 @@ if tab == "Shot Maps":
 
                 # Combine into a single DataFrame
                 shot_events = pd.concat(dfs_list, ignore_index=True)
+                # Rename 'Enrique Gudino De Grote' to 'Enrique Gudino'
+                shot_events['Player'] = shot_events['Player'].replace('Enrique Gudino De Grote', 'Enrique Gudino')
+
 
             except FileNotFoundError as e:
                 st.error(f"File not found for a selected match. Please check data files: {e}")
@@ -117,7 +120,6 @@ if tab == "Shot Maps":
         ####################################################################
 
         # calc xG from imported file
-        shot_events['Player'] = shot_events['Player'].replace('Enrique Gudino De Grote', 'Enrique Gudino')
         total_shots = calc_xg(shot_events)
 
         # Setup the pitch
