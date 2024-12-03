@@ -132,14 +132,18 @@ if tab == "Shot Maps":
         # Display the plot
         st.pyplot(fig)
 
+        # All Players filter
+        total_shots['filter'] = total_shots['Team'].apply(lambda x: "All Players" if x == "United SC", else x)
+
         # show data set for only selected player shots
-        if player == "All Players":
-            filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
-            filtered_shots.reset_index(drop=True, inplace=True)
-        elif player != "All Players":
-            filtered_shots = total_shots[total_shots['Player'] == player]
-            filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
-            filtered_shots.reset_index(drop=True, inplace=True)
+        if view == "Shots For":
+            if player == "All Players":
+                filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
+                filtered_shots.reset_index(drop=True, inplace=True)
+            else:
+                filtered_shots = total_shots[total_shots['Player'] == player]
+                filtered_shots = filtered_shots[['Player', 'Team', 'xG', 'outcome', 'shotType', 'situation']]
+                filtered_shots.reset_index(drop=True, inplace=True)
         else:
             filtered_shots = total_shots.copy()
             filtered_shots = filtered_shots[['Team', 'xG', 'outcome', 'shotType', 'situation']]
