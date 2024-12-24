@@ -17,14 +17,28 @@ from matplotlib.patches import Circle
 import matplotlib.transforms as transforms
 
 # External Packages
-from data_processing import data_preparation, calc_xg
-from visuals import createShotmap
-from match_data import load_matches
+from data_processing import DataProcessing
+from visuals import FootballVisuals
+from match_data import MatchData
 
 ####################################################################
 
 # Define team
 team = "United SC"
+match_data = MatchData() # Create instance once at the start
+
+
+# Define model paths for DataProcessing
+model_paths = {
+    'op': 'Models/expected_goals_model_lr.sav',
+    'non_op': 'Models/expected_goals_model_lr_v2.sav'
+}
+
+# Create an instance of DataProcessing
+data_processor = DataProcessing(model_paths)
+
+# Create an instant of FootballVisuals
+visuals = FootballVisuals(model_paths=model_paths)
 
 # Create Title
 st.title(f"{team} Stats Dashboard")
@@ -33,7 +47,6 @@ st.title(f"{team} Stats Dashboard")
 tab = st.sidebar.radio("Select a tab:", ("Shot Maps", "Shot Leaders"))
 
 if tab == "Shot Maps":
-
     # Error Handling
     try:
 
@@ -51,7 +64,7 @@ if tab == "Shot Maps":
         )
 
         # Create a DataFrame of the match
-        match_df = load_matches(competition=competition, season=season)
+        match_df = match_data.load_matches(competition=competition, season=season)
 
         # Selector for Shots For or Shots Against
         view = st.sidebar.selectbox(
@@ -120,15 +133,15 @@ if tab == "Shot Maps":
         ####################################################################
 
         # calc xG from imported file
-        total_shots = calc_xg(shot_events)
+        total_shots = data_processor.calc_xg(shot_events)
 
         # Setup the pitch
         pitch = VerticalPitch(pitch_type='statsbomb', pitch_color='#1d2849', line_color='w', half=True, pad_top=20, pad_right=20)
         fig, ax = pitch.draw(figsize=(8, 10))
 
         # shot map method
-        createShotmap(total_shots, pitch=pitch, fig=fig, ax=ax, team=team, view=view, competition=competition, season_year=season, players=player, 
-                    pitchcolor='#1d2849', shot_color='gray', titlecolor='w', team_color='w', fontfamily='Segoe UI')
+        visuals.createShotmap(total_shots, pitch=pitch, fig=fig, ax=ax, team=team, view=view, competition=competition, season_year=season, players=player, 
+                              pitchcolor='#1d2849', shot_color='gray', titlecolor='w', team_color='w', fontfamily='Segoe UI')
 
         st.write("Viewing shots from matches vs selected opponent(s):")
 
@@ -177,7 +190,7 @@ elif tab == "Shot Leaders":
             )
 
         # Create a DataFrame of the match
-        match_df = load_matches(competition=competition, season=season)
+        match_df = match_data.load_matches(competition=competition, season=season)
 
             # Read and combine data for selected matches
         dfs_list = []
@@ -197,7 +210,7 @@ elif tab == "Shot Leaders":
         shot_events = pd.concat(dfs_list, ignore_index=True)
 
         # calc xG from imported file
-        total_shots = calc_xg(shot_events)
+        total_shots = data_processor.calc_xg(shot_events)
 
         # Compute metrics
         total_shots["non_penalty_xG"] = total_shots.apply(
