@@ -1,0 +1,40 @@
+name: Sync UPSL Data from Scraper
+
+on:
+  # Trigger the action when changes are pushed to the web scraper repository
+  push:
+    branches:
+      - main
+    # Optionally, specify the file if you want to trigger only when the data file changes
+    paths:
+      - "upsl_data.json"
+  # Or schedule the action to run periodically, for example, once a day
+  schedule:
+    - cron: "0 0 * * *" # Runs once a day at midnight
+
+jobs:
+  sync-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Streamlit repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "egudinogr@yahoo.com"
+          git config --global user.name "egudino20"
+
+      - name: Clone the scraper repository
+        run: |
+          git clone https://github.com/egudino20/upsl-webscraper.git
+          
+      - name: Copy the upsl_data.json file
+        run: |
+          cp upsl-webscraper/upsl_data.json ./upsl_data.json
+
+      - name: Commit and push changes
+        run: |
+          git add upsl_data.json
+          git commit -m "Update upsl_data.json from web scraper"
+          git push
