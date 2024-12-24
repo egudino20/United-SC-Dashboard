@@ -11,6 +11,8 @@ on:
   # Or schedule the action to run periodically, for example, once a day
   schedule:
     - cron: "0 0 * * *" # Runs once a day at midnight
+  # Allow manual triggering of the workflow
+  workflow_dispatch:
 
 jobs:
   sync-data:
@@ -38,3 +40,4 @@ jobs:
           git add upsl_data.json
           git commit -m "Update upsl_data.json from web scraper"
           git push
+
