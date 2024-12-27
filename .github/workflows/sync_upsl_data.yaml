@@ -1,4 +1,4 @@
-name: Sync UPSL Data from Scraper
+# name: Sync UPSL Data from Scraper
 
 on:
   # Trigger the action when changes are pushed to the web scraper repository
@@ -9,8 +9,8 @@ on:
     paths:
       - "upsl_data.json"
   # Or schedule the action to run periodically, for example, once a day
-  schedule:
-    - cron: "0 0 * * *" # Runs once a day at midnight
+  # schedule:
+  #   - cron: "0 0 * * *" # Runs once a day at midnight
   # Allow manual triggering of the workflow
   workflow_dispatch:
 
@@ -38,6 +38,7 @@ jobs:
       - name: Commit and push changes
         run: |
           git add upsl_data.json
+          git pull origin main # Fetch and merge changes from the remote
           git commit -m "Update upsl_data.json from web scraper"
           git push
 
